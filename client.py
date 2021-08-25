@@ -1,10 +1,28 @@
+import threading
 from socket import *
 serverName = '127.0.0.1'
 serverPort = 12000
-clientSocket = socket(AF_INET, SOCK_STREAM)
-clientSocket.connect((serverName, serverPort))
-sentence = raw_input("Input LowerCase Sentence")
-clientSocket.send(sentence.encode())
-modifiedSentence = clientSocket.recv(1024)
-print("From Server: ", modifiedSentence.decode())
-clientSocket.close()
+nickname = input("Choose a nickname: ")
+client = socket(AF_INET, SOCK_STREAM)
+client.connect((serverName, serverPort))
+def recieve():
+	while True:
+		try:
+			message = client.recv(1024).decode('ascii')
+			if message == 'NICK':
+				client.send(nickname.encode('ascii'))
+			else:
+				print(message)
+		except:
+			print("An error occured")
+			client.close()
+			break
+def write():
+	while True:
+		message = f'{nickname}:{input("")}'
+		client.send(message.encode('ascii'))
+recieve_thread = threading.Thread(target = recieve)
+recieve_thread.start()
+
+write_thread = threading.Thread(target = write)
+write_thread.start()
