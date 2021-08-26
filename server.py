@@ -1,3 +1,4 @@
+
 import threading
 import sys
 from socket import *
@@ -31,12 +32,12 @@ def handle(client):
 					name_to_kick = msg.decode('ascii')[5:]
 					kick_user(name_to_kick)
 				else:
-					clients.send("Command was refused!".encode('ascii'))
+					client.send("Command was refused!".encode('ascii'))
 			elif msg.decode('ascii').startswith('BAN'):
 				if nicknames[clients.index(client)] == 'admin':
 					name_to_ban = msg.decode('ascii')[4:]
 					ban_user(name_to_ban)
-					with open(ban.txt, 'a') as f:
+					with open('ban.txt', 'a') as f:
 						f.write(name_to_ban+'\n')
 					print(name_to_ban, 'was banned!')
 				else:
